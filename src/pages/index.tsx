@@ -1,16 +1,12 @@
 import React from 'react';
-import { withUrqlClient, initUrqlClient } from 'next-urql';
-import {
-  ssrExchange,
-  dedupExchange,
-  cacheExchange,
-  fetchExchange,
-  useQuery,
-} from 'urql';
+import { withUrqlClient } from 'next-urql';
+import { dedupExchange, cacheExchange, fetchExchange, useQuery } from 'urql';
 import { devtoolsExchange } from '@urql/devtools';
 import type { Client } from 'urql';
 import gql from 'graphql-tag';
 import { FaArrowRight } from 'react-icons/fa';
+
+import getNextStaticProps from 'helpers/getNextStaticProps';
 import appConfig from 'app.config';
 import {
   Footer,
@@ -139,32 +135,6 @@ export async function getStaticProps(ctx) {
       })
       .toPromise()
   );
-}
-
-async function getNextStaticProps(ctx, clientPromise) {
-  const ssrCache = ssrExchange({ isClient: false });
-  const client = initUrqlClient(
-    {
-      url: appConfig.graphqlEndpoint,
-      exchanges: [
-        devtoolsExchange,
-        dedupExchange,
-        cacheExchange,
-        ssrCache,
-        fetchExchange,
-      ],
-    },
-    false
-  );
-
-  await clientPromise(client);
-
-  return {
-    props: {
-      urqlState: ssrCache.extractData(),
-    },
-    revalidate: 600,
-  };
 }
 
 export default withUrqlClient((_ssrExchange, ctx) => ({

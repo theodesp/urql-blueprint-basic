@@ -15,6 +15,7 @@
     "dataloader": "^2.1.0",
     "graphql": "^16.4.0",
     "graphql-tag": "^2.12.6",
+    "lodash": "^4.17.21",
     "next": "12.1.5",
     "next-urql": "^3.3.2",
     "normalize.css": "^8.0.1",
