@@ -23,7 +23,7 @@ import { pageTitle } from 'utils';
 
 const postsPerPage = 3;
 
-const POSTS_QUERY = gql`
+export const POSTS_QUERY = gql`
   query GetPosts($first: Int, $categoryName: String) {
     posts(first: $first, where: { categoryName: $categoryName }) {
       nodes {
