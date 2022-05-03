@@ -1,7 +1,8 @@
 import { initUrqlClient } from 'next-urql';
 import appConfig from 'app.config';
 import { devtoolsExchange } from '@urql/devtools';
-import { ssrExchange, dedupExchange, cacheExchange, fetchExchange } from 'urql';
+import { ssrExchange, dedupExchange, fetchExchange } from 'urql';
+import { cacheExchange } from '@urql/exchange-graphcache';
 
 export default async function getNextStaticProps(ctx, clientPromise) {
   const ssrCache = ssrExchange({ isClient: false });
@@ -11,7 +12,7 @@ export default async function getNextStaticProps(ctx, clientPromise) {
       exchanges: [
         devtoolsExchange,
         dedupExchange,
-        cacheExchange,
+        cacheExchange(),
         ssrCache,
         fetchExchange,
       ],

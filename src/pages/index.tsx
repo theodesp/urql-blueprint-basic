@@ -24,8 +24,16 @@ import { pageTitle } from 'utils';
 const postsPerPage = 3;
 
 export const POSTS_QUERY = gql`
-  query GetPosts($first: Int, $categoryName: String) {
-    posts(first: $first, where: { categoryName: $categoryName }) {
+  query GetPosts($first: Int, $categoryName: String, $after: String) {
+    posts(
+      first: $first
+      after: $after
+      where: { categoryName: $categoryName }
+    ) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         id
         uri
@@ -33,6 +41,7 @@ export const POSTS_QUERY = gql`
         date
         author {
           node {
+            id
             name
           }
         }
