@@ -1,14 +1,16 @@
 import { dedupExchange, cacheExchange, fetchExchange, useQuery } from 'urql';
 import { devtoolsExchange } from '@urql/devtools';
 import { withUrqlClient } from 'next-urql';
+import { useRouter } from 'next/router.js';
 import type { Client } from 'urql';
 import gql from 'graphql-tag';
-import { useRouter } from 'next/router.js';
+import getPageParams from 'utils/getPageParams';
+
 import isString from 'lodash/isString.js';
 
 import appConfig from 'app.config';
 import getNextStaticProps from 'helpers/getNextStaticProps';
-import { hasPageId, hasPageUri } from 'helpers/assert';
+
 import {
   Header,
   EntryHeader,
@@ -61,22 +63,7 @@ export function PageComponent({ page }) {
 
 function Page() {
   const { query } = useRouter();
-
-  let params = {};
-  if (hasPageId(query)) {
-    params = {
-      id: query.pageId,
-      idType: 'ID',
-      ...params,
-    };
-  }
-  if (hasPageUri(query)) {
-    params = {
-      id: query.pageUri.join('/'),
-      idType: 'URI',
-      ...params,
-    };
-  }
+  let params = getPageParams(query);
   const [{ data, fetching }] = useQuery({
     query: PAGE_QUERY,
     variables: params,
@@ -93,21 +80,7 @@ function Page() {
 
 export async function getStaticProps(ctx) {
   const query = ctx.params;
-  let params = {};
-  if (hasPageId(query)) {
-    params = {
-      id: query.pageId,
-      idType: 'ID',
-      ...params,
-    };
-  }
-  if (hasPageUri(query)) {
-    params = {
-      id: query.pageUri.join('/'),
-      idType: 'URI',
-      ...params,
-    };
-  }
+  let params = getPageParams(query);
 
   return getNextStaticProps(ctx, (client: Client) =>
     client.query(PAGE_QUERY, params).toPromise()

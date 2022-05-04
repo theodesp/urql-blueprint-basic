@@ -58,7 +58,7 @@ function Page() {
                 ...pageVariables,
                 ...{
                   after,
-                  first: 9,
+                  first: appConfig.postsPerPage,
                   categoryName: 'uncategorized',
                 },
               })

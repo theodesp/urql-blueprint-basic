@@ -5,10 +5,10 @@ import type { Client } from 'urql';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router.js';
 import isString from 'lodash/isString.js';
+import getPostParams from 'utils/getPostParams';
 
 import appConfig from 'app.config';
 import getNextStaticProps from 'helpers/getNextStaticProps';
-import { hasPostId, hasPostSlug, hasPostUri } from 'helpers/assert';
 import {
   Header,
   EntryHeader,
@@ -67,27 +67,7 @@ export function PostComponent({ post }) {
 
 function Page() {
   const { query } = useRouter();
-
-  let params = {};
-  if (hasPostId(query)) {
-    params = {
-      id: query.postId,
-      idType: 'ID',
-      ...params,
-    };
-  } else if (hasPostSlug(query)) {
-    params = {
-      id: query.postSlug,
-      idType: 'SLUG',
-      ...params,
-    };
-  } else if (hasPostUri(query)) {
-    params = {
-      id: query.postUri.join('/'),
-      idType: 'URI',
-      ...params,
-    };
-  }
+  const params = getPostParams(query);
   const [{ data, fetching }] = useQuery({
     query: POST_QUERY,
     variables: params,
@@ -104,26 +84,7 @@ function Page() {
 
 export async function getStaticProps(ctx) {
   const query = ctx.params;
-  let params = {};
-  if (hasPostId(query)) {
-    params = {
-      id: query.postId,
-      idType: 'ID',
-      ...params,
-    };
-  } else if (hasPostSlug(query)) {
-    params = {
-      id: query.postSlug,
-      idType: 'SLUG',
-      ...params,
-    };
-  } else if (hasPostUri(query)) {
-    params = {
-      id: query.postUri.join('/'),
-      idType: 'URI',
-      ...params,
-    };
-  }
+  const params = getPostParams(query);
 
   return getNextStaticProps(ctx, (client: Client) =>
     client.query(POST_QUERY, params).toPromise()
